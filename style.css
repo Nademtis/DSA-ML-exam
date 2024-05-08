@@ -1,0 +1,6 @@
+#gameCanvas{
+    width: 960px;
+    --height: 576px;
+    border: 1px solid black;
+    image-rendering: pixelated;
+}
