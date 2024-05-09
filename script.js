@@ -10,7 +10,7 @@ ctx.imageSmoothingEnabled = false; //make pixelart
 export default class Main {
     constructor() {
         this.roomManager = new RoomManger(ctx)
-        this.player = new Player(ctx)
+        this.player = new Player(ctx, this.roomManager)
         this.inputManger = new InputManger(this.player)
         this.tick = this.tick.bind(this);
         this.lastTimestamp = 0
@@ -19,7 +19,6 @@ export default class Main {
     start() {
 
 
-        //this.roomManager.update()
 
         requestAnimationFrame(this.tick)
     }

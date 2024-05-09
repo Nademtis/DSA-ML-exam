@@ -1,15 +1,21 @@
 export default class Player {
-    constructor(ctx) {
+    constructor(ctx, roomManager) {
         this.ctx = ctx
         //player fields
-        this.x = 5
-        this.y = 5
+        this.x = 15
+        this.y = 10
         this.width = 16
         this.height = 20
 
+        //player collision
+        this.hitboxX = 4
+        this.hitboxY = 15
+        this.hitboxW = 8
+        this.hitboxH = 5
+
         //for animation
-        this.playerFramesSouth = []
-        this.currentPlayerFrame = 0
+        //this.playerFramesSouth = []
+        //this.currentPlayerFrame = 0
 
         //idle player
         this.playerIdleImage
@@ -20,6 +26,9 @@ export default class Player {
         this.isMoving = false
         this.moveSpeed = 65
 
+        //refference to roomManger (need this for movement collision)
+        this.roomManager = roomManager
+
         this.start()
     }
     start() {
@@ -28,14 +37,16 @@ export default class Player {
     }
     update(deltaTime) {
         this.movePlayer(deltaTime)
-        //console.log(`playerX: ${this.x}, playerY: ${this.y}`); // for logging x and y
+        //console.log(`${this.x}, ${this.y}`); //for loggin player pos
+        this.getCoordFromPos(this.x, this.y)
+
     }
     loadPlayerImage() {
         this.playerIdleImage = new Image()
         this.playerIdleImage.src = document.getElementById("idlePlayerImage").src
 
     }
-    movePlayer(deltaTime){
+    movePlayer(deltaTime) {
         const newPos = {
             x: this.x,
             y: this.y,
@@ -60,17 +71,71 @@ export default class Player {
             this.direction = "down"
             newPos.y += this.moveSpeed * deltaTime
         }
-
-        //should use a canMoveToPos method
+        if (this.playerCanMoveTo(newPos)) {
             this.x = newPos.x
             this.y = newPos.y
-
-        /*if (this.canMovePlayerToPos(newPos)) {
-            this.model.player.x = newPos.x
-            this.model.player.y = newPos.y
-        }*/
+        }
     }
 
+    playerCanMoveTo(newPos) {
+
+        let coord = this.getCoordFromPos(newPos.x, newPos.y)
+
+        let coords = this.getTilesUnderPlayer(newPos)
+        //console.log(coords);
+
+        for (let i = 0; i < coords.length; i++) {
+            if (!this.canMoveTo(coords[i])) {
+                return false
+            }
+        }
+        return true
+
+    }
+    canMoveTo({ row, col }) {
+        if (row < 0 || row >= 9 - 1 ||
+            col < 0 || col >= 15 - 1) {
+            return false
+        }
+        let mapTileIndex = row * 15 + col
+        const tileType = this.roomManager.currentMapArray[mapTileIndex]
+        switch (tileType) {
+            case 0: return true;
+            //case 1: return true;
+            //case 3: return true
+        }
+    }
+    getCoordFromPos({ x, y }) {
+        const row = Math.floor(y / 16)
+        const col = Math.floor(x / 16)
+        const coord = { row, col }
+        return coord
+    }
+
+    getTilesUnderPlayer(newPos = { x: this.x, y: this.y }) {
+        const tileCoords = []
+        const topLeft = {
+            x: newPos.x + this.hitboxX,
+            y: newPos.y + this.hitboxY
+        }
+        const topRight = { x: topLeft.x + this.hitboxW, y: topLeft.y }
+        const bottomLeft = { x: topLeft.x, y: topLeft.y + this.hitboxH };
+        const bottomRight = { x: topRight.x, y: bottomLeft.y };
+
+
+        const topLeftCoords = this.getCoordFromPos(topLeft)
+        const topRightCoords = this.getCoordFromPos(topRight)
+        const bottomLeftCoords = this.getCoordFromPos(bottomLeft);
+        const bottomRightCoords = this.getCoordFromPos(bottomRight);
+
+        tileCoords.push(topLeftCoords)
+        tileCoords.push(topRightCoords)
+        tileCoords.push(bottomLeftCoords);
+        tileCoords.push(bottomRightCoords);
+
+        return tileCoords
+
+    }
 
 
 
@@ -98,9 +163,6 @@ export default class Player {
         
     }*/
     drawPlayer() {
-
-
-
         //const frame = this.playerFramesSouth[this.currentPlayerFrame];
         //console.log(frame.image.src); // Log the image object
         // Log the coordinates and dimensions
@@ -111,8 +173,38 @@ export default class Player {
 
         //this.ctx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 10, 10, frame.sw, frame.sh)
         this.ctx.drawImage(this.playerIdleImage, this.x, this.y)
+
+        //draw debug on top
+        this.debugShowPlayerMovementHitbox()
+        this.debugDrawRectAroundTiles()
     }
 
+    debugShowPlayerMovementHitbox() {
+        // might need to use this .save - don't really know
+        //this.ctx.save();
+
+        this.ctx.strokeStyle = 'yellow';
+        this.ctx.beginPath();
+        this.ctx.rect(this.x + this.hitboxX, this.y + this.hitboxY, this.hitboxW, this.hitboxH);
+        this.ctx.stroke();
+
+        // might need to use this .restore - don't really know
+        //this.ctx.restore();
+    }
+    debugDrawRectAroundTiles() {
+        this.ctx.strokeStyle = 'blue';
+        const tiles = this.getTilesUnderPlayer();
+
+        for (const tile of tiles) {
+            const x = tile.col * 16;
+            const y = tile.row * 16;
+            this.ctx.beginPath();
+            this.ctx.rect(x, y, 16, 16);
+            this.ctx.stroke();
+        }
+
+        //this.ctx.restore();
+    }
 
 }
 
