@@ -3,9 +3,9 @@ export default class InputManger {
         this.player = player
         this.start()
     }
-start(){
-    this.setupKeyboardListener()
-}
+    start() {
+        this.setupKeyboardListener()
+    }
 
     setupKeyboardListener() {
         document.addEventListener("keydown", (event) => this.keyPress(event)) // without using arrow function the method would not have the correct refference -->
@@ -18,6 +18,10 @@ start(){
             case "w": this.player.controls.up = true; break
             case "s": this.player.controls.down = true; break
             //case "e": this.controls.use = true; break
+            case "ArrowRight": this.player.shootDirection = "right"; break
+            case "ArrowLeft": this.player.shootDirection = "left"; break
+            case "ArrowUp": this.player.shootDirection = "up"; break
+            case "ArrowDown": this.player.shootDirection = "down"; break
         }
         if (this.player.controls.right) this.player.direction = "right"
         else if (this.player.controls.left) this.player.direction = "left"
@@ -32,6 +36,11 @@ start(){
             case "w": this.player.controls.up = false; break
             case "s": this.player.controls.down = false; break
             //case "e": this.controls.use = false; break
+            case "ArrowRight":
+            case "ArrowLeft":
+            case "ArrowUp":
+            case "ArrowDown":
+                this.player.shootDirection = null; break
         }
     }
 }

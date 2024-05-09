@@ -26,7 +26,14 @@ export default class Player {
         this.isMoving = false
         this.moveSpeed = 65
 
-        //refference to roomManger (need this for movement collision)
+        //shooting
+        this.shootDirection = null
+        this.canShoot = true
+        this.fireRate = 2
+        this.bulletSpeed = 100
+        this.bulletDamage = 1
+
+        //refference to roomManger (need this for movement collision) - uses currentMapArray
         this.roomManager = roomManager
 
         this.start()
@@ -37,15 +44,32 @@ export default class Player {
     }
     update(deltaTime) {
         this.movePlayer(deltaTime)
-        //console.log(`${this.x}, ${this.y}`); //for loggin player pos
-        this.getCoordFromPos(this.x, this.y)
-
+        this.playerShoot(deltaTime)
+        //console.log(`${this.x}, ${this.y}`); //for logging player pos
     }
+
+    
     loadPlayerImage() {
         this.playerIdleImage = new Image()
         this.playerIdleImage.src = document.getElementById("idlePlayerImage").src
 
     }
+
+    playerShoot(deltaTime){
+        if (this.shootDirection && this.canShoot){
+            console.log("shoot: " + this.shootDirection);
+            
+            
+            //shoot cooldown method - uses this.firerate from above
+            this.canShoot = false;
+            setTimeout(() => {
+                this.canShoot = true;
+            }, 1000 / this.fireRate);
+
+        }
+    }
+
+    //#region playerMovement
     movePlayer(deltaTime) {
         const newPos = {
             x: this.x,
@@ -136,7 +160,7 @@ export default class Player {
         return tileCoords
 
     }
-
+    //#endregion playerMovement
 
 
     /*loadPlayerFrames() {
@@ -179,6 +203,7 @@ export default class Player {
         this.debugDrawRectAroundTiles()
     }
 
+    //#region debug
     debugShowPlayerMovementHitbox() {
         // might need to use this .save - don't really know
         //this.ctx.save();
@@ -205,7 +230,7 @@ export default class Player {
 
         //this.ctx.restore();
     }
-
+    //#endregion debug
 }
 
 
