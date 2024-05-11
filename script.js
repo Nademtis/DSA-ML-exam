@@ -6,7 +6,7 @@ import RoomManger from "./roomManager.js";
 
 let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d");
-ctx.imageSmoothingEnabled = false; //make pixelart
+ctx.imageSmoothingEnabled = false; //make rendermode pixelart
 
 
 export default class Main {
@@ -38,7 +38,7 @@ export default class Main {
         this.player.update(deltaTime)
         this.roomManager.update(deltaTime)
         this.bulletManager.update(deltaTime)
-        this.enemy.update()
+        this.enemy.update(deltaTime)
 
 
         //draw - remember it needs to draw from back to front

@@ -3,19 +3,20 @@ export default class Enemy {
         this.ctx = ctx;
         this.roomManager = roomManager;
         this.player = player
-        // Other enemy properties initialization
 
         //enemy Position
         this.x = 16 * 10
         this.y = 16 * 2
-
         this.width = 10
         this.height = 10
+
+        //movement
+        this.moveSpeed = 65
 
         //for Astar (pathfinding)
         this.openTiles = []    //nodes we currently look at
         this.closedTiles = []  //nodes we have allready looked at
-        this.finalPath = []
+        this.pathToPlayer = []
 
         //for debuggin line of sight (bresenhams)
         this.lineCellList = []
@@ -27,24 +28,74 @@ export default class Enemy {
         //runs Astar every
         setInterval(() => {
             this.AstarRunner();
-        }, 1000);
-    }
-    update() {
+        }, 300);
 
-        
-        //this.lineCellList = [] //emply LOS array
+
+    }
+    update(deltaTime) {
+        this.moveTowardsPlayer(deltaTime)
+        //this.lineCellList = [] //empty LOS array
         //this.calculateLineOfSight(this.x + 5, this.y + 5, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
 
     }
-    AstarRunner(){
-        this.aStar(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
-        this.openTiles = []
-        this.closedTiles = []
-    }
     draw() {
         this.drawEnemyCube()
-        this.debugDrawLineOfSight()
-        this.debugDrawPath()
+        //this.debugDrawLineOfSight()
+        //this.debugDrawPath()
+    }
+    moveTowardsPlayer(deltaTime) { //GOT FROM GPT - WILL MAKE OWN LATER 
+        if (this.pathToPlayer.length === 0) {
+            // No path to follow
+            return;
+        }
+
+        // Get the next tile in the path
+        const nextTile = this.pathToPlayer[0];
+
+        // Calculate the destination position based on the next tile
+        const destX = nextTile.col * 16; // Assuming each tile is 16 pixels wide
+        const destY = nextTile.row * 16; // Assuming each tile is 16 pixels tall
+
+        // Calculate the direction to move in
+        const dx = destX - this.x +2;
+        const dy = destY - this.y +2;
+
+        // Calculate the distance to move in each frame based on move speed and deltaTime
+        const distanceToMove = this.moveSpeed * deltaTime;
+
+        // Calculate the magnitude of the direction vector
+        const magnitude = Math.sqrt(dx * dx + dy * dy);
+
+        // Normalize the direction vector
+        const nx = dx / magnitude;
+        const ny = dy / magnitude;
+
+        // Calculate the movement in x and y directions
+        const moveX = nx * distanceToMove;
+        const moveY = ny * distanceToMove;
+
+        // If the enemy is close enough to the next tile, remove it from the path
+        if (Math.abs(dx) <= distanceToMove && Math.abs(dy) <= distanceToMove) {
+            this.pathToPlayer.shift(); // Remove the first element (next tile) from the path
+            return;
+        }
+
+        // Update the position of the enemy
+        this.x += moveX;
+        this.y += moveY;
+    }
+
+
+
+    //should move towards player
+    //should use this.movespeed
+    // this.pathToPlayer is the path to player
+
+    AstarRunner() {
+        this.aStar(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
+
+        this.openTiles = []
+        this.closedTiles = []
     }
     aStar(startX, startY, endX, endY) {
         let startCoord = this.getCoordFromPos({ x: startX, y: startY })
@@ -52,26 +103,22 @@ export default class Enemy {
         //console.log(`startCoord: ${startCoord.row}, ${startCoord.col}`);
         //console.log(`endCoord: ${endCoord.row}, ${endCoord.col}`);
 
-        //fCost = g + h
         //gCost = from startCoord to given tile
-        //hCost = heuristic - estimated cost for this tile to endCoord - use manhatten
+        //hCost = heuristic - estimated cost from this tile to endCoord - I use manhatten distance
+        //fCost = g + h - the totalValue
         startCoord.gCost = 0
         startCoord.hCost = this.calcManhattenDistance(startCoord.row, startCoord.col, endCoord.row, endCoord.col)
         startCoord.fCost = startCoord.gCost + startCoord.hCost
         this.openTiles.push(startCoord)
-
 
         let debugIndex = 0
         let endFound = false
         while (this.openTiles.length > 0 || debugIndex > 1000) { //while openTiles is not empty (there is more to check)
             if (endFound) break;
 
-
             this.openTiles.sort((a, b) => a.fCost - b.fCost); //sort the openTiles by fCost - we allways want to look at the closest tile first
             let currentTile = this.openTiles.shift(); // return and remove from openTiles the possible bestTile
-
             this.closedTiles.push(currentTile)
-
 
             let neighbors = this.getNeighborTiles(currentTile.row, currentTile.col)
             //console.log(neighbors);
@@ -111,7 +158,7 @@ export default class Enemy {
 
             //make sure not infinite while loop (this is only for safety reasons)
             if (debugIndex > 995) {
-                console.log("ouch");
+                console.error("something went wrong in Astar")
             }
             debugIndex++
         }
@@ -169,8 +216,8 @@ export default class Enemy {
             currentTile = currentTile.parent;
         }
 
-        path.unshift(startTile); // add first start tile because we're done
-        this.finalPath = path //finalPath is used for drawing and possible movement
+        //path.unshift(startTile); // add first start tile because we're done - might not need since enemy know what tile it's on
+        this.pathToPlayer = path //finalPath is used for drawing and possible movement
     }
 
     drawEnemyCube() {
@@ -180,9 +227,9 @@ export default class Enemy {
         this.ctx.stroke();
     }
     debugDrawPath() {
-        for (let i = 0; i < this.finalPath.length; i++) {
-            const x = this.finalPath[i].col * 16;
-            const y = this.finalPath[i].row * 16;
+        for (let i = 0; i < this.pathToPlayer.length; i++) {
+            const x = this.pathToPlayer[i].col * 16;
+            const y = this.pathToPlayer[i].row * 16;
 
             this.ctx.strokeStyle = "orange";
             this.ctx.lineWidth = 1;
