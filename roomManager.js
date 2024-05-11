@@ -29,7 +29,7 @@ export default class RoomManger {
         this.roomImage.src = document.getElementById("wholeRoom").src //set room img src
     }
 
-    update() { //update should run every tick
+    update(deltaTime) { //update should run every tick
 
         //logic for doors
     }

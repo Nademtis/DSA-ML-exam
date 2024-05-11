@@ -1,9 +1,9 @@
 export default class Player {
-    constructor(ctx, roomManager) {
+    constructor(ctx, roomManager, bulletManager) {
         this.ctx = ctx
         //player fields
-        this.x = 15
-        this.y = 10
+        this.x = 140
+        this.y = 55
         this.width = 16
         this.height = 20
 
@@ -35,6 +35,7 @@ export default class Player {
 
         //refference to roomManger (need this for movement collision) - uses currentMapArray
         this.roomManager = roomManager
+        this.bulletManager = bulletManager
 
         this.start()
     }
@@ -44,8 +45,9 @@ export default class Player {
     }
     update(deltaTime) {
         this.movePlayer(deltaTime)
-        this.playerShoot(deltaTime)
-        //console.log(`${this.x}, ${this.y}`); //for logging player pos
+        this.playerShoot()
+        //console.log(`${this.x}, ${this.y}`);                       //for logging player pos
+        //console.log(this.getCoordFromPos({x: this.x, y: this.y}));    //for logging player coord (x,y) - so topleft corner
     }
 
     
@@ -55,10 +57,10 @@ export default class Player {
 
     }
 
-    playerShoot(deltaTime){
+    playerShoot(){
         if (this.shootDirection && this.canShoot){
-            console.log("shoot: " + this.shootDirection);
-            
+
+            this.bulletManager.createBullet(this.x, this.y, this.shootDirection, this.bulletSpeed, this.bulletDamage)
             
             //shoot cooldown method - uses this.firerate from above
             this.canShoot = false;
@@ -103,7 +105,7 @@ export default class Player {
 
     playerCanMoveTo(newPos) {
 
-        let coord = this.getCoordFromPos(newPos.x, newPos.y)
+        //let coord = this.getCoordFromPos(newPos.x, newPos.y)
 
         let coords = this.getTilesUnderPlayer(newPos)
         //console.log(coords);
@@ -199,8 +201,8 @@ export default class Player {
         this.ctx.drawImage(this.playerIdleImage, this.x, this.y)
 
         //draw debug on top
-        this.debugShowPlayerMovementHitbox()
-        this.debugDrawRectAroundTiles()
+        //this.debugShowPlayerMovementHitbox()
+        //this.debugDrawRectAroundTiles()
     }
 
     //#region debug
