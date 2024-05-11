@@ -2,8 +2,8 @@ export default class Player {
     constructor(ctx, roomManager, bulletManager) {
         this.ctx = ctx
         //player fields
-        this.x = 140
-        this.y = 55
+        this.x = 16*1
+        this.y = 16*6
         this.width = 16
         this.height = 20
 
