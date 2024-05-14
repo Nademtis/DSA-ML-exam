@@ -14,7 +14,8 @@ export default class Main {
         this.bulletManager = new BulletManager(ctx)
         this.roomManager = new RoomManger(ctx)
         this.player = new Player(ctx, this.roomManager, this.bulletManager)
-        this.enemy = new Enemy(ctx, this.roomManager, this.player)
+        this.enemy = new Enemy(ctx, this.roomManager, this.player, 5, 5)
+        //this.enemy2 = new Enemy(ctx, this.roomManager, this.player, 7, 0)     //for having another enemy
         this.inputManger = new InputManger(this.player)
         this.tick = this.tick.bind(this);
         this.lastTimestamp = 0
@@ -39,13 +40,14 @@ export default class Main {
         this.roomManager.update(deltaTime)
         this.bulletManager.update(deltaTime)
         this.enemy.update(deltaTime)
-
+        //this.enemy2.update(deltaTime)
 
         //draw - remember it needs to draw from back to front
         this.roomManager.drawRoom()
         this.bulletManager.draw()
         this.player.drawPlayer()
         this.enemy.draw()
+        //this.enemy2.draw()
 
         requestAnimationFrame(this.tick)
     }

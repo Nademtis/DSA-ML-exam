@@ -1,17 +1,17 @@
 export default class Enemy {
-    constructor(ctx, roomManager, player) {
+    constructor(ctx, roomManager, player, spawnRow, spawnCol) {
         this.ctx = ctx;
         this.roomManager = roomManager;
         this.player = player
 
         //enemy Position
-        this.x = 16 * 10
-        this.y = 16 * 2
+        this.x = 16 * spawnCol + 3 //+3 is just to center enemy - delete later
+        this.y = 16 * spawnRow + 3 //+3 is just to center enemy - delete later
         this.width = 10
         this.height = 10
 
         //movement
-        this.moveSpeed = 65
+        this.moveSpeed = 45
 
         //for Astar (pathfinding)
         this.openTiles = []    //nodes we currently look at
@@ -25,21 +25,23 @@ export default class Enemy {
     }
     start() {
 
-        //runs Astar every
+        //runs Astar every xxx seconds
         setInterval(() => {
             this.AstarRunner();
-        }, 300);
+        }, 100);
 
 
     }
     update(deltaTime) {
         this.moveTowardsPlayer(deltaTime)
-        //this.lineCellList = [] //empty LOS array
-        //this.calculateLineOfSight(this.x + 5, this.y + 5, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
 
+        this.lineCellList = [] //empty LOS array - should not be here in update
+        this.calculateLineOfSight(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
     }
     draw() {
         this.drawEnemyCube()
+        
+        //DEBUG
         //this.debugDrawLineOfSight()
         //this.debugDrawPath()
     }
@@ -57,8 +59,8 @@ export default class Enemy {
         const destY = nextTile.row * 16; // Assuming each tile is 16 pixels tall
 
         // Calculate the direction to move in
-        const dx = destX - this.x +2;
-        const dy = destY - this.y +2;
+        const dx = destX - this.x + 2;
+        const dy = destY - this.y + 2;
 
         // Calculate the distance to move in each frame based on move speed and deltaTime
         const distanceToMove = this.moveSpeed * deltaTime;
@@ -93,7 +95,6 @@ export default class Enemy {
 
     AstarRunner() {
         this.aStar(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
-
         this.openTiles = []
         this.closedTiles = []
     }
@@ -271,7 +272,7 @@ export default class Enemy {
                 currentRow += sy;
             }
         }
-        //for pushing the tile player is on - is only really used in the debugdraw
+        //for pushing the tile player is on - is only really used in the debugdraw LOS
         if (currentCol == coord2.col || currentRow == coord2.row) {
             this.lineCellList.push({ row: currentRow, col: currentCol })
         }
