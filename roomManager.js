@@ -19,7 +19,7 @@ export default class RoomManger {
         this.gridRows = 9
         this.gridCols = 15
         this.tileMapImages = this.loadTilesFromDOM()
-        this.roomImage = new Image()
+        this.roomImage = new Image() //burde bruge et room objekt
         this.start()
     }
 

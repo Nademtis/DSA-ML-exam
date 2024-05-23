@@ -33,7 +33,7 @@ export default class Enemy {
 
     }
     update(deltaTime) {
-        this.moveTowardsPlayer(deltaTime)
+        //this.moveTowardsPlayer(deltaTime)
 
         this.lineCellList = [] //empty LOS array - should not be here in update
         this.calculateLineOfSight(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
