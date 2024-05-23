@@ -1,5 +1,6 @@
 let model;
 let tileImageList = []
+let roomImage = document.getElementById("wholeNewRoom")
 
 window.addEventListener("load", start)
 function start() {
@@ -94,12 +95,69 @@ function predict(image) {
     const reshapedImage = tensorImage.reshape([1, 16, 16, 3]);
     const predictions = model.predict(reshapedImage);
 
-    predictions.print();
+    //predictions.print();
 
     const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
     const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // ... is javascript spread syntax, so it calcs the correct index
 
     //return tileImageList[predictedIndex].src //for checking predict is correct image
     return predictedIndex;
+}
+function generateRoomArray(roomImage) {
+    const roomWidth = 15; // Room width in tiles
+    const roomHeight = 9; // Room height in tiles
+    const tileSize = 16; // Each tile is 16x16 pixels
 
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = roomImage.width;
+    canvas.height = roomImage.height;
+    context.drawImage(roomImage, 0, 0, roomImage.width, roomImage.height);
+
+    const roomArray = [];
+
+    for (let y = 0; y < roomHeight; y++) {
+        for (let x = 0; x < roomWidth; x++) {
+            const imageData = context.getImageData(x * tileSize, y * tileSize, tileSize, tileSize);
+            const tileCanvas = document.createElement('canvas');
+            const tileContext = tileCanvas.getContext('2d');
+            tileCanvas.width = tileSize;
+            tileCanvas.height = tileSize;
+            tileContext.putImageData(imageData, 0, 0);
+
+            /*const tensorImage = preprocessImage(tileCanvas);
+            const reshapedImage = tensorImage.reshape([1, 16, 16, 3]);
+            const predictions = model.predict(reshapedImage);
+
+            const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
+            const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // Get the index of the highest prediction value
+            */
+            let predictedIndex = predict(tileCanvas)
+            roomArray.push(predictedIndex);
+        }
+    }
+
+    //console.log(roomArray); // for printingthe array not formatted
+    //this.currentMapArray = roomArray;
+    let formattedArray = printFormattedArray(roomArray)
+}
+function printFormattedArray(array) { //this formatting method is from chatGPT
+    const rows = 9;
+    const cols = 15;
+    let formattedString = 'this.currentMapArray = [\n';
+
+    for (let i = 0; i < rows; i++) {
+        formattedString += '    ';
+        for (let j = 0; j < cols; j++) {
+            formattedString += array[i * cols + j];
+            if (j < cols - 1) {
+                formattedString += ', ';
+            }
+        }
+        if (i < rows - 1) {
+            formattedString += ',\n';
+        }
+    }
+    formattedString += '\n];';
+    console.log(formattedString);
 }

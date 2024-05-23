@@ -11,7 +11,7 @@ export default class Enemy {
         this.height = 10
 
         //movement
-        this.moveSpeed = 45
+        this.moveSpeed = 25
 
         //for Astar (pathfinding)
         this.openTiles = []    //nodes we currently look at
@@ -33,17 +33,17 @@ export default class Enemy {
 
     }
     update(deltaTime) {
-        //this.moveTowardsPlayer(deltaTime)
+        this.moveTowardsPlayer(deltaTime)
 
         this.lineCellList = [] //empty LOS array - should not be here in update
         this.calculateLineOfSight(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
     }
     draw() {
         this.drawEnemyCube()
-        
+
         //DEBUG
         //this.debugDrawLineOfSight()
-        //this.debugDrawPath()
+        this.debugDrawPath()
     }
     moveTowardsPlayer(deltaTime) { //GOT FROM GPT - WILL MAKE OWN LATER 
         if (this.pathToPlayer.length === 0) {
@@ -186,21 +186,21 @@ export default class Enemy {
         let possibleNeighbors = []
 
         if (row + 1 < 8) {//add below
-            if (this.roomManager.currentMapArray[(row + 1) * 15 + col] == 0) //only add if walkable
+            if (this.roomManager.currentMapArray[(row + 1) * 15 + col] <= 2) //only add if walkable - check DOM for tileImage indexes
                 possibleNeighbors.push({ row: row + 1, col: col, d: "below" })
         }
 
         if (row - 1 >= 1) {//add above
-            if (this.roomManager.currentMapArray[(row - 1) * 15 + col] == 0)
+            if (this.roomManager.currentMapArray[(row - 1) * 15 + col] <= 2)
                 possibleNeighbors.push({ row: row - 1, col: col, d: "above" })
         }
 
         if (col + 1 < 14) {//add right
-            if (this.roomManager.currentMapArray[row * 15 + (col + 1)] == 0)
+            if (this.roomManager.currentMapArray[row * 15 + (col + 1)] <= 2)
                 possibleNeighbors.push({ row: row, col: col + 1, d: "right" })
         }
         if (col - 1 > 0) {//add left
-            if (this.roomManager.currentMapArray[row * 15 + (col - 1)] == 0)
+            if (this.roomManager.currentMapArray[row * 15 + (col - 1)] <= 2)
                 possibleNeighbors.push({ row: row, col: col - 1, d: "left" })
         }
         return possibleNeighbors
@@ -284,7 +284,7 @@ export default class Enemy {
             const y = this.lineCellList[i].row * 16;
 
             //only blue if floor
-            if (this.roomManager.currentMapArray[this.lineCellList[i].row * 15 + this.lineCellList[i].col] == 0) {
+            if (this.roomManager.currentMapArray[this.lineCellList[i].row * 15 + this.lineCellList[i].col] <= 2) { //check DOM tiles for this <=2
                 this.ctx.strokeStyle = 'blue';
             } else {
                 this.ctx.strokeStyle = 'red';

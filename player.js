@@ -2,7 +2,7 @@ export default class Player {
     constructor(ctx, roomManager, bulletManager) {
         this.ctx = ctx
         //player fields
-        this.x = 16*1
+        this.x = 16*4
         this.y = 16*6
         this.width = 16
         this.height = 20
@@ -126,9 +126,9 @@ export default class Player {
         let mapTileIndex = row * 15 + col
         const tileType = this.roomManager.currentMapArray[mapTileIndex]
         switch (tileType) {
-            case 0: return true;
-            //case 1: return true;
-            //case 3: return true
+            case 0: return true //look at DOM tiles for this information
+            case 1: return true
+            case 2: return true
         }
     }
     getCoordFromPos({ x, y }) {
