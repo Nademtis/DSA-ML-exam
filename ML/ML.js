@@ -1,12 +1,11 @@
 let model;
 let tileImageList = []
-//let labels = []
 
 window.addEventListener("load", start)
 function start() {
     initModel()
     initTileImageList()
-    //trainModel(200)
+    //trainModel(500)
 }
 
 async function initModel() {
@@ -27,7 +26,7 @@ async function initModel() {
     model.add(tf.layers.flatten());
 
     model.add(tf.layers.dense({
-        units: 15, //was 15
+        units: 15, //was 10
         activation: 'relu'
     }));
 
@@ -97,7 +96,7 @@ function predict(image) {
 
     predictions.print();
 
-    const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to array
+    const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
     const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // ... is javascript spread syntax, so it calcs the correct index
 
     //return tileImageList[predictedIndex].src //for checking predict is correct image
