@@ -6,7 +6,7 @@ window.addEventListener("load", start)
 function start() {
     initModel()
     initTileImageList()
-    //trainModel(500)
+    loadModel()
 }
 
 async function initModel() {
@@ -82,6 +82,31 @@ async function trainModel(amountOfEpochs) {
     console.log(history); // Print training history to console
 
 }
+async function trainModelUntilPerfect() {
+    let allPredictionsCorrect = false;
+    let totalEpochsNeeded = 0
+
+    while (!allPredictionsCorrect) {
+        await trainModel(10);
+        totalEpochsNeeded += 10;
+        allPredictionsCorrect = true;
+
+        for (let i = 0; i < tileImageList.length; i++) {
+            let predictedIndex = predict(tileImageList[i]);
+
+            if (predictedIndex !== i) {
+                allPredictionsCorrect = false;
+                break;
+            }
+        }
+
+        if (allPredictionsCorrect) {
+            console.log(`Model is trained to perfection. It needed ${totalEpochsNeeded} epochs`);
+        } else {
+            console.log("Model needs more training...");
+        }
+    }
+}
 function preprocessImage(image) {
     const tensorImage = tf.browser.fromPixels(image)
         .resizeNearestNeighbor([16, 16]) // just in case image is not 16x16 pixels
@@ -95,7 +120,7 @@ function predict(image) {
     const reshapedImage = tensorImage.reshape([1, 16, 16, 3]);
     const predictions = model.predict(reshapedImage);
 
-    predictions.print();
+    predictions.print(); //for checking the result on all classes
 
     const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
     const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // ... is javascript spread syntax, so it calcs the correct index
@@ -130,7 +155,7 @@ function generateRoomArray(roomImage) {
             const predictions = model.predict(reshapedImage);
 
             const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
-            const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // Get the index of the highest prediction value
+            const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // get the index of the highest prediction value (the correct tile)
             */
             let predictedIndex = predict(tileCanvas)
             roomArray.push(predictedIndex);
@@ -161,28 +186,16 @@ function printFormattedArray(array) { //this formatting method is from chatGPT
     formattedString += '\n];';
     console.log(formattedString);
 }
-async function trainModelUntilPerfect() {
-    let allPredictionsCorrect = false;
-    let totalEpochsNeeded = 0
 
-    while (!allPredictionsCorrect) {
-        await trainModel(10);
-        totalEpochsNeeded += 10;
-        allPredictionsCorrect = true;
-
-        for (let i = 0; i < tileImageList.length; i++) {
-            let predictedIndex = predict(tileImageList[i]);
-
-            if (predictedIndex !== i) {
-                allPredictionsCorrect = false;
-                break;
-            }
-        }
-
-        if (allPredictionsCorrect) {
-            console.log(`Model is trained to perfection. It needed ${totalEpochsNeeded} epochs`);
-        } else {
-            console.log("Model needs more training...");
-        }
+async function saveModel() {
+    const saveModel = await model.save('downloads://my_model');
+    //console.log(saveModel);
+}
+async function loadModel() {
+    try {
+        model = await tf.loadLayersModel('ML/my_model.json');
+        console.log("model loaded succesfully");
+    } catch (error) {
+        console.log(error);
     }
 }
