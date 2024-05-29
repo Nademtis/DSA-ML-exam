@@ -95,7 +95,7 @@ function predict(image) {
     const reshapedImage = tensorImage.reshape([1, 16, 16, 3]);
     const predictions = model.predict(reshapedImage);
 
-    //predictions.print();
+    predictions.print();
 
     const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
     const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // ... is javascript spread syntax, so it calcs the correct index
@@ -160,4 +160,29 @@ function printFormattedArray(array) { //this formatting method is from chatGPT
     }
     formattedString += '\n];';
     console.log(formattedString);
+}
+async function trainModelUntilPerfect() {
+    let allPredictionsCorrect = false;
+    let totalEpochsNeeded = 0
+
+    while (!allPredictionsCorrect) {
+        await trainModel(10);
+        totalEpochsNeeded += 10;
+        allPredictionsCorrect = true;
+
+        for (let i = 0; i < tileImageList.length; i++) {
+            let predictedIndex = predict(tileImageList[i]);
+
+            if (predictedIndex !== i) {
+                allPredictionsCorrect = false;
+                break;
+            }
+        }
+
+        if (allPredictionsCorrect) {
+            console.log(`Model is trained to perfection. It needed ${totalEpochsNeeded} epochs`);
+        } else {
+            console.log("Model needs more training...");
+        }
+    }
 }

@@ -24,13 +24,10 @@ export default class Enemy {
         this.start()
     }
     start() {
-
         //runs Astar every xxx seconds
         setInterval(() => {
             this.AstarRunner();
         }, 100);
-
-
     }
     update(deltaTime) {
         this.moveTowardsPlayer(deltaTime)
@@ -87,11 +84,6 @@ export default class Enemy {
         this.y += moveY;
     }
 
-
-
-    //should move towards player
-    //should use this.movespeed
-    // this.pathToPlayer is the path to player
 
     AstarRunner() {
         this.aStar(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
