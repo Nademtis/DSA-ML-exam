@@ -178,21 +178,21 @@ export default class Enemy {
         let possibleNeighbors = []
 
         if (row + 1 < 8) {//add below
-            if (this.roomManager.currentMapArray[(row + 1) * 15 + col] <= 2) //only add if walkable - check DOM for tileImage indexes
+            if (this.roomManager.currentRoomArray[(row + 1) * 15 + col] <= 2) //only add if walkable - check DOM for tileImage indexes
                 possibleNeighbors.push({ row: row + 1, col: col, d: "below" })
         }
 
         if (row - 1 >= 1) {//add above
-            if (this.roomManager.currentMapArray[(row - 1) * 15 + col] <= 2)
+            if (this.roomManager.currentRoomArray[(row - 1) * 15 + col] <= 2)
                 possibleNeighbors.push({ row: row - 1, col: col, d: "above" })
         }
 
         if (col + 1 < 14) {//add right
-            if (this.roomManager.currentMapArray[row * 15 + (col + 1)] <= 2)
+            if (this.roomManager.currentRoomArray[row * 15 + (col + 1)] <= 2)
                 possibleNeighbors.push({ row: row, col: col + 1, d: "right" })
         }
         if (col - 1 > 0) {//add left
-            if (this.roomManager.currentMapArray[row * 15 + (col - 1)] <= 2)
+            if (this.roomManager.currentRoomArray[row * 15 + (col - 1)] <= 2)
                 possibleNeighbors.push({ row: row, col: col - 1, d: "left" })
         }
         return possibleNeighbors

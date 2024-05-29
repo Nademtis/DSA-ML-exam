@@ -6,42 +6,35 @@ window.addEventListener("load", start)
 function start() {
     initModel()
     initTileImageList()
-    loadModel()
+    //loadModel()
 }
 
 async function initModel() {
     model = tf.sequential();
-
     model.add(tf.layers.conv2d({
         filters: 5, //was 5
         kernelSize: 3, //was 3
         activation: 'relu',
         inputShape: [16, 16, 3]
     }));
-
     model.add(tf.layers.maxPooling2d({
         poolSize: [2, 2],
         strides: [2, 2]
     }));
-
     model.add(tf.layers.flatten());
-
     model.add(tf.layers.dense({
         units: 15, //was 10
         activation: 'relu'
     }));
-
-
     model.add(tf.layers.dense({
-        units: 20,  //because we have 20 tiles
+        units: 20,  //because we have 20 tiles/images
         activation: 'softmax'
     }));
-
     const adam = tf.train.adam(0.002); //was 0.001
-
     model.compile({
         optimizer: adam,
-        loss: 'categoricalCrossentropy', // binaryCrossentropy for multi-label classification and Categorical cross-entropy for single-label classification
+        loss: 'categoricalCrossentropy', 
+        //CategoricalCrossentropy because we want multi-class classification
         metrics: ['accuracy']
     });
 }
@@ -61,26 +54,24 @@ async function trainModel(amountOfEpochs) {
     const labels = []
 
     for (let i = 0; i < tileImageList.length; i++) {
-        const tensorImage = preprocessImage(tileImageList[i]); // Preprocess the image
-        tensorImageList.push(tensorImage); // Add the preprocessed image to the list
+        const tensorImage = preprocessImage(tileImageList[i]);
+        tensorImageList.push(tensorImage); //add the preprocessed image to the list
 
-        // Create corresponding label (one-hot encoded)
+        //create labels (one-hot encoded)
         const label = tf.oneHot(i, tileImageList.length);
         labels.push(label);
     }
-    const inputImagesTensor = tf.stack(tensorImageList); // Stack the preprocessed images into a single tensor
+    const inputImagesTensor = tf.stack(tensorImageList); //stack the preprocessed images into a single tensor
     const labelsTensor = tf.stack(labels);
 
-    // Fit the model
     const history = await model.fit(inputImagesTensor, labelsTensor, {
         epochs: amountOfEpochs,
         verbose: 1,
-        shuffle: true, // Shuffle the dataset before each epoch
-        batchSize: 1 // Adjust batch size as needed
+        shuffle: true, //shuffle images before each epoch
+        batchSize: 1
     });
 
-    console.log(history); // Print training history to console
-
+    console.log(history);
 }
 async function trainModelUntilPerfect() {
     let allPredictionsCorrect = false;
@@ -122,7 +113,7 @@ function predict(image) {
 
     predictions.print(); //for checking the result on all classes
 
-    const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
+    const predictionValues = predictions.arraySync()[0]; //convert tensor predictions to JS array
     const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // ... is javascript spread syntax, so it calcs the correct index
 
     //return tileImageList[predictedIndex].src //for checking predict is correct image
@@ -186,7 +177,6 @@ function printFormattedArray(array) { //this formatting method is from chatGPT
     formattedString += '\n];';
     console.log(formattedString);
 }
-
 async function saveModel() {
     const saveModel = await model.save('downloads://my_model');
     //console.log(saveModel);

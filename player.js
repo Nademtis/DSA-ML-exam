@@ -124,7 +124,7 @@ export default class Player {
             return false
         }
         let mapTileIndex = row * 15 + col
-        const tileType = this.roomManager.currentMapArray[mapTileIndex]
+        const tileType = this.roomManager.currentRoomArray[mapTileIndex]
         switch (tileType) {
             case 0: return true //look at DOM tiles for this information
             case 1: return true
