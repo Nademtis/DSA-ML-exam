@@ -1,15 +1,14 @@
 body {
-  height: 0vh;
+  height: 100vh;
   margin: 0;
+  overflow: hidden;
   font-family: "Courier New", Courier, monospace;
   background-color: rgb(68, 68, 63);
 }
 h1 {
   text-align: center;
 }
-h2 {
-  text-align: center;
-}
+
 
 #gameCanvas {
   width: 960px;
@@ -25,10 +24,10 @@ h2 {
 
 #toggleLineOfSight,
 #togglePath {
-  margin: 10px;
-  padding: 8px 16px;
+  margin: 5px;
+  padding: 5px 20px;
   border: none;
-  background-color: #ccc;
+  background-color: #a3a0a0;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -36,6 +35,6 @@ h2 {
 #toggleLineOfSight.active,
 #togglePath.active {
   background-color: #eee;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); /* Add box shadow when active */
-  transform: scale(1.1); /* Grow in size when active */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  transform: scale(1.1);
 }

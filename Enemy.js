@@ -48,7 +48,7 @@ export default class Enemy {
 
         this.lineCellList = [] //empty LOS array - should not be here in update
         this.calculateLineOfSight(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
-        
+
         //for the debug draw buttons in gui
         this.updateButtonStyles()
     }
