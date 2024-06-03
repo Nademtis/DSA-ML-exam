@@ -1,14 +1,15 @@
 body {
   height: 0vh;
   margin: 0;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
+  background-color: rgb(68, 68, 63);
 }
 h1 {
   text-align: center;
 }
 h2 {
-    text-align: center;
-  }
+  text-align: center;
+}
 
 #gameCanvas {
   width: 960px;

@@ -42,7 +42,6 @@ export default class Enemy {
         document.getElementById('togglePath').addEventListener('click', () => {
             this.debugPath = !this.debugPath;
         });
-        this.updateButtonStyles();
     }
     update(deltaTime) {
         this.moveTowardsPlayer(deltaTime)
