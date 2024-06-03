@@ -7,17 +7,21 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <canvas id="gameCanvas" width="240" height="144"></canvas>
+    <h1>Datastrukturer og Algoritmer</h1>
+    <h2>Pathfinding & Line of Sight</h2>
+    <div id="container">
+      <button id="toggleLineOfSight">Toggle Bresenham's line algorithm</button>
+      <button id="togglePath">Toggle A*</button>
 
+      <canvas id="gameCanvas" width="240" height="144"></canvas>
+    </div>
     <img id="tileImage0" src="tiles/newTiles/floor.png" hidden />
     <img id="tileImage1" src="tiles/newTiles/floorPattern1.png" hidden />
     <img id="tileImage2" src="tiles/newTiles/floorPattern2.png" hidden />
 
-
-
     <img id="tileImage3" src="tiles/newTiles/wallVertical.png" hidden />
     <img id="tileImage4" src="tiles/newTiles/wallHorizontal.png" hidden />
-    
+
     <img id="tileImage5" src="tiles/newTiles/doorNorth.png" hidden />
     <img id="tileImage6" src="tiles/newTiles/doorSouth.png" hidden />
     <img id="tileImage7" src="tiles/newTiles/doorEast.png" hidden />
@@ -27,19 +31,26 @@
     <img id="tileImage10" src="tiles/newTiles/rock2.png" hidden />
     <img id="tileImage11" src="tiles/newTiles/rock3.png" hidden />
 
-
     <img id="tileImage12" src="tiles/newTiles/holeNorth.png" hidden />
     <img id="tileImage13" src="tiles/newTiles/holeSouth.png" hidden />
     <img id="tileImage14" src="tiles/newTiles/holeWest.png" hidden />
     <img id="tileImage15" src="tiles/newTiles/holeEast.png" hidden />
-    <img id="tileImage16" src="tiles/newTiles/holeBottomLeftCorner.png" hidden />
-    <img id="tileImage17" src="tiles/newTiles/holeBottomRightCorner.png" hidden />
+    <img
+      id="tileImage16"
+      src="tiles/newTiles/holeBottomLeftCorner.png"
+      hidden
+    />
+    <img
+      id="tileImage17"
+      src="tiles/newTiles/holeBottomRightCorner.png"
+      hidden
+    />
     <img id="tileImage18" src="tiles/newTiles/holeTopRightCorner.png" hidden />
     <img id="tileImage19" src="tiles/newTiles/holeTopLeftCorner.png" hidden />
-    
+
     <img id="playerSheet" src="Character 3.png" hidden />
     <img id="idlePlayerImage" src="idlePlayer.png" hidden />
-    
+
     <img id="wholeNewRoom" src="wholeNewRoom.png" hidden />
 
     <script src="script.js" type="module"></script>

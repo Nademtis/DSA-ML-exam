@@ -21,6 +21,10 @@ export default class Enemy {
         //for debuggin line of sight (bresenhams)
         this.lineCellList = []
 
+        //debug flag
+        this.debugLineOfSight = false;
+        this.debugPath = false;
+
         this.start()
     }
     start() {
@@ -28,19 +32,41 @@ export default class Enemy {
         setInterval(() => {
             this.AstarRunner();
         }, 100);
+
+        //for the GUI button to turn on and offa
+        document.getElementById('toggleLineOfSight').addEventListener('click', () => {
+            this.debugLineOfSight = !this.debugLineOfSight;
+        });
+
+        //for the GUI button to turn on and off
+        document.getElementById('togglePath').addEventListener('click', () => {
+            this.debugPath = !this.debugPath;
+        });
+        this.updateButtonStyles();
     }
     update(deltaTime) {
         this.moveTowardsPlayer(deltaTime)
 
         this.lineCellList = [] //empty LOS array - should not be here in update
         this.calculateLineOfSight(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
+        
+        //for the debug draw buttons in gui
+        this.updateButtonStyles()
     }
     draw() {
         this.drawEnemyCube()
 
         //DEBUG
-        //this.debugDrawLineOfSight()
-        this.debugDrawPath()
+        if (this.debugLineOfSight) this.debugDrawLineOfSight();
+        if (this.debugPath) this.debugDrawPath();
+
+    }
+    updateButtonStyles() {
+        const lineOfSightButton = document.getElementById('toggleLineOfSight');
+        const pathButton = document.getElementById('togglePath');
+
+        lineOfSightButton.classList.toggle('active', this.debugLineOfSight);
+        pathButton.classList.toggle('active', this.debugPath);
     }
     moveTowardsPlayer(deltaTime) { //GOT FROM GPT - WILL MAKE OWN LATER 
         if (this.pathToPlayer.length === 0) {
@@ -109,9 +135,8 @@ export default class Enemy {
         while (this.openTiles.length > 0 || debugIndex > 1000) { //while openTiles is not empty (there is more to check)
             if (endFound) break;
 
-            this.openTiles.sort((a, b) => a.fCost - b.fCost); //sort the openTiles by fCost - we allways want to look at the closest tile first
+            this.openTiles.sort((a, b) => a.fCost - b.fCost); //sort the openTiles by fCost - we allways want to look at the best tile first
             let currentTile = this.openTiles.shift(); // return and remove from openTiles the possible bestTile
-            this.closedTiles.push(currentTile)
 
             let neighbors = this.getNeighborTiles(currentTile.row, currentTile.col)
             //console.log(neighbors);
@@ -132,13 +157,13 @@ export default class Enemy {
                 neighbor.hCost = this.calcManhattenDistance(neighbor.row, neighbor.col, endCoord.row, endCoord.col)
                 neighbor.fCost = neighbor.gCost + neighbor.hCost
 
-                //check if neighbor is within closedList - we dont want to check it anymore, we allready did
+                //check if neighbor is within openTiles - we dont want to check it anymore, we allready did
                 if (this.isTileInlist(this.openTiles, neighbor)) {
                     //console.log("already checked in openList, skipping this one");
                     continue
                 }
 
-                //check if neigbor is in closedList - meaning...
+                //check if neigbor is in closedList
                 if (this.isTileInlist(this.closedTiles, neighbor)) {
                     //console.log("this is in closedList, skipping this one");
                     continue
@@ -146,7 +171,6 @@ export default class Enemy {
                     this.openTiles.push(neighbor)
                 }
             }
-
             this.closedTiles.push(currentTile)
 
             //make sure not infinite while loop (this is only for safety reasons)
@@ -155,7 +179,6 @@ export default class Enemy {
             }
             debugIndex++
         }
-
         // After finding the end tile
         if (endFound) {
             let lastIndex = this.closedTiles.length - 1
@@ -240,11 +263,11 @@ export default class Enemy {
 
         //let m = (endY - startY) / (endX - startX) //print the following right now: 0.36
 
-        let dx = Math.abs(coord2.col - coord1.col);
-        let dy = Math.abs(coord2.row - coord1.row);
-        let sx = (coord1.col < coord2.col) ? 1 : -1;
-        let sy = (coord1.row < coord2.row) ? 1 : -1;
-        let err = dx - dy; //bresenhams error. used for determining if y should change
+        let dx = Math.abs(coord2.col - coord1.col);     //the absoulute difference between start and end point
+        let dy = Math.abs(coord2.row - coord1.row);     //the absoulute difference between start and end point
+        let sx = (coord1.col < coord2.col) ? 1 : -1;    //determine the direction 
+        let sy = (coord1.row < coord2.row) ? 1 : -1;    //determine the direction
+        let err = dx - dy;                              //bresenhams error. used for determining if y or x should change
 
         let currentCol = coord1.col;
         let currentRow = coord1.row;
@@ -254,7 +277,7 @@ export default class Enemy {
             //console.log(`Cell: ${currentRow}-${currentCol}`);
             this.lineCellList.push({ row: currentRow, col: currentCol })
 
-            let e2 = 2 * err;
+            let e2 = 2 * err; //double the err to remove floating point numbers (computer is faster with int)
             if (e2 > -dy) {
                 err -= dy;
                 currentCol += sx;
@@ -276,7 +299,7 @@ export default class Enemy {
             const y = this.lineCellList[i].row * 16;
 
             //only blue if floor
-            if (this.roomManager.currentMapArray[this.lineCellList[i].row * 15 + this.lineCellList[i].col] <= 2) { //check DOM tiles for this <=2
+            if (this.roomManager.currentRoomArray[this.lineCellList[i].row * 15 + this.lineCellList[i].col] <= 2) { //check DOM tiles for this <=2
                 this.ctx.strokeStyle = 'blue';
             } else {
                 this.ctx.strokeStyle = 'red';

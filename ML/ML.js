@@ -6,7 +6,7 @@ window.addEventListener("load", start)
 function start() {
     initModel()
     initTileImageList()
-    //loadModel()
+    loadModel()
 }
 
 async function initModel() {
@@ -111,10 +111,11 @@ function predict(image) {
     const reshapedImage = tensorImage.reshape([1, 16, 16, 3]);
     const predictions = model.predict(reshapedImage);
 
-    predictions.print(); //for checking the result on all classes
+    //predictions.print(); //for checking the result on all classes
 
     const predictionValues = predictions.arraySync()[0]; //convert tensor predictions to JS array
-    const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // ... is javascript spread syntax, so it calcs the correct index
+    const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues));
+    // ... is javascript spread syntax, so it calcs the correct index
 
     //return tileImageList[predictedIndex].src //for checking predict is correct image
     return predictedIndex;
@@ -140,22 +141,13 @@ function generateRoomArray(roomImage) {
             tileCanvas.width = tileSize;
             tileCanvas.height = tileSize;
             tileContext.putImageData(imageData, 0, 0);
-
-            /*const tensorImage = preprocessImage(tileCanvas);
-            const reshapedImage = tensorImage.reshape([1, 16, 16, 3]);
-            const predictions = model.predict(reshapedImage);
-
-            const predictionValues = predictions.arraySync()[0]; // convert tensor predictions to JS array
-            const predictedIndex = predictionValues.indexOf(Math.max(...predictionValues)); // get the index of the highest prediction value (the correct tile)
-            */
             let predictedIndex = predict(tileCanvas)
             roomArray.push(predictedIndex);
         }
     }
-
     //console.log(roomArray); // for printingthe array not formatted
     //this.currentMapArray = roomArray;
-    let formattedArray = printFormattedArray(roomArray)
+    printFormattedArray(roomArray)
 }
 function printFormattedArray(array) { //this formatting method is from chatGPT
     const rows = 9;
