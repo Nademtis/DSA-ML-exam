@@ -61,7 +61,7 @@ export default class Player {
         this.ctx.drawImage(this.playerIdleImage, this.x, this.y)
 
         //draw debug on top
-        this.debugShowPlayerMovementHitbox()
+        //this.debugShowPlayerMovementHitbox()
         //this.debugDrawRectAroundTiles()
     }
     loadPlayerImage() {
