@@ -1,5 +1,5 @@
 
-# Datastructures and Algorithms Exam - Pathfinding & Line of Sight
+# Data Structures and Algorithms Exam - Pathfinding & Line of Sight
 
 Controls: WASD  
 Press Buttons in GUI to see visualization of algorithms  
