@@ -1,6 +1,6 @@
 import Enemy from "./Enemy.js";
 import BulletManager from "./managerScripts/bulletManager.js";
-import InputManger from "./managerScripts/inputManger.js";
+import InputManger from "./managerScripts/inputManager.js";
 import Player from "./player.js";
 import RoomManager from "./managerScripts/roomManager.js";
 

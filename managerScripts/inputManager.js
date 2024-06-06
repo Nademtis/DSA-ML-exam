@@ -1,4 +1,4 @@
-export default class InputManger {
+export default class InputManager {
     constructor(player) {
         this.player = player
         this.start()
