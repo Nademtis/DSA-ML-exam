@@ -60,51 +60,34 @@ export default class Enemy {
         if (this.debugPath) this.debugDrawPath();
 
     }
-    updateButtonStyles() {
+    updateButtonStyles() { //this method is for the GUI buttons
         const lineOfSightButton = document.getElementById('toggleLineOfSight');
         const pathButton = document.getElementById('togglePath');
 
         lineOfSightButton.classList.toggle('active', this.debugLineOfSight);
         pathButton.classList.toggle('active', this.debugPath);
     }
-    moveTowardsPlayer(deltaTime) { //GOT FROM GPT - WILL MAKE OWN LATER 
-        if (this.pathToPlayer.length === 0) {
-            // No path to follow
-            return;
-        }
+    moveTowardsPlayer(deltaTime) {
+        if (this.pathToPlayer.length === 0) return // enemy might be next to player or there is no path
 
-        // Get the next tile in the path
         const nextTile = this.pathToPlayer[0];
 
-        // Calculate the destination position based on the next tile
-        const destX = nextTile.col * 16; // Assuming each tile is 16 pixels wide
-        const destY = nextTile.row * 16; // Assuming each tile is 16 pixels tall
+        const destX = nextTile.col * 16; //calc in pixels the next x
+        const destY = nextTile.row * 16; //calc in pixels the next y
 
-        // Calculate the direction to move in
-        const dx = destX - this.x + 2;
-        const dy = destY - this.y + 2;
+        const dx = destX - this.x + 3; //calculate direction to move in
+        const dy = destY - this.y + 3;
 
-        // Calculate the distance to move in each frame based on move speed and deltaTime
-        const distanceToMove = this.moveSpeed * deltaTime;
+        const distanceToMove = this.moveSpeed * deltaTime; //calc how far enemy should move based on speed and deltaTime
 
-        // Calculate the magnitude of the direction vector
-        const magnitude = Math.sqrt(dx * dx + dy * dy);
+        const magnitude = Math.sqrt(dx * dx + dy * dy); //calc vector magnitude in order to normalize
 
-        // Normalize the direction vector
-        const nx = dx / magnitude;
-        const ny = dy / magnitude;
+        const nx = dx / magnitude; //calc normalized x
+        const ny = dy / magnitude; //calc normalized y
 
-        // Calculate the movement in x and y directions
-        const moveX = nx * distanceToMove;
+        const moveX = nx * distanceToMove; //use normalized values with distanceToMove (enemy should not move faster diagonally)
         const moveY = ny * distanceToMove;
 
-        // If the enemy is close enough to the next tile, remove it from the path
-        if (Math.abs(dx) <= distanceToMove && Math.abs(dy) <= distanceToMove) {
-            this.pathToPlayer.shift(); // Remove the first element (next tile) from the path
-            return;
-        }
-
-        // Update the position of the enemy
         this.x += moveX;
         this.y += moveY;
     }
@@ -172,9 +155,10 @@ export default class Enemy {
             }
             this.closedTiles.push(currentTile)
 
-            //make sure not infinite while loop (this is only for safety reasons)
+            //make sure not infinite while loop (this is only for safety reasons if enemy is somehow out of the grid)
             if (debugIndex > 995) {
-                console.error("something went wrong in Astar")
+                console.error("something went wrong in Astar in this object:" + this)
+                //should kill/remove this object
             }
             debugIndex++
         }
