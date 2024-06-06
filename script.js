@@ -1,20 +1,19 @@
 import Enemy from "./Enemy.js";
-import BulletManager from "./bulletManager.js";
-import InputManger from "./inputManger.js";
+import BulletManager from "./managerScripts/bulletManager.js";
+import InputManger from "./managerScripts/inputManger.js";
 import Player from "./player.js";
-import RoomManager from "./roomManager.js";
+import RoomManager from "./managerScripts/roomManager.js";
 
 let canvas = document.getElementById("gameCanvas");
 let ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false; //make rendermode pixelart
-
 
 export default class Main {
     constructor() {
         this.bulletManager = new BulletManager(ctx)
         this.roomManager = new RoomManager(ctx)
         this.player = new Player(ctx, this.roomManager, this.bulletManager)
-        this.enemy = new Enemy(ctx, this.roomManager, this.player, 5, 5)
+        this.enemy = new Enemy(ctx, this.roomManager, this.player, 2, 13)
         this.inputManger = new InputManger(this.player)
         this.tick = this.tick.bind(this);
         this.lastTimestamp = 0
