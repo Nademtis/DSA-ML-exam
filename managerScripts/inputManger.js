@@ -8,7 +8,7 @@ export default class InputManger {
     }
 
     setupKeyboardListener() {
-        document.addEventListener("keydown", (event) => this.keyPress(event)) // without using arrow function the method would not have the correct refference -->
+        document.addEventListener("keydown", (event) => this.keyPress(event)) // without using arrow function the method would not have the correct refference
         document.addEventListener("keyup", (event) => this.keyUp(event))
     }
     keyPress(event) {

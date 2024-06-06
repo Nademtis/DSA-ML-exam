@@ -3,6 +3,7 @@ export default class BulletManager {
         this.ctx = ctx
         this.playerBullets = [];
         this.enemyBullets = [];
+        this.start()
     }
 
     start() {
@@ -17,12 +18,9 @@ export default class BulletManager {
     drawPlayerBullets(){
         for (let i = 0; i < this.playerBullets.length; i++) {
             let bullet = this.playerBullets[i];
-            this.ctx.fillStyle = "red"; // Set bullet color
+            this.ctx.fillStyle = "red";
             
-            // Draw a simple rectangle for the bullet
             this.ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
-            
-            // You can customize the drawing logic based on your bullet graphics
         }
     }
     simulatePlayerBullets(deltaTime){
@@ -34,7 +32,6 @@ export default class BulletManager {
             bullet.y += bullet.velocityY * deltaTime;
             
             // should probably have collision and out of bounds here
-            
         }
     }
     createBullet(playerX, playerY, shootDirection, bulletSpeed, bulletDamage) {

@@ -16,23 +16,20 @@ export default class RoomManger {
         this.tileH = 16
         this.gridRows = 9
         this.gridCols = 15
-        this.tileMapImages = this.loadTilesFromDOM()
-        this.roomImage = new Image() //burde bruge et room objekt
+        //this.tileMapImages = this.loadTilesFromDOM()
+        this.roomImage = new Image() //burde bruge et room objekt?
         this.start()
     }
 
     start() {
-        //this.loadTilesFromDOM()
-
         this.roomImage.src = document.getElementById("wholeNewRoom").src //set room img src
     }
 
-    update(deltaTime) { //update should run every tick
-
-        //logic for doors
+    update(deltaTime) {
+        //logic for doors and maybe active room something
     }
 
-    drawRoom() {
+    draw() {
         this.ctx.drawImage(this.roomImage, 0, 0)
     }
 
@@ -52,11 +49,10 @@ export default class RoomManger {
         }
     }*/
 
-    //this is used for getting single tiles in the program
-    loadTilesFromDOM() {
+    loadTilesFromDOM() { //this is used for getting single tile images
         let tileMap = [];
 
-        // Iterate over the tile IDs and push their corresponding image sources into the tileMap array
+        // get the images from DOM - put in list
         for (let i = 0; i <= 8; i++) {
             let tileImage = document.getElementById(`tileImage${i}`);
             if (tileImage) {

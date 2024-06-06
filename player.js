@@ -33,15 +33,14 @@ export default class Player {
         this.bulletSpeed = 100
         this.bulletDamage = 1
 
-        //refference to roomManger (need this for movement collision) - uses currentMapArray
-        this.roomManager = roomManager
-        this.bulletManager = bulletManager
+       
+        this.roomManager = roomManager      //need this for movement collision - uses currentMapArray
+        this.bulletManager = bulletManager // need this for creating bullets
 
         this.start()
     }
     start() {
         this.loadPlayerImage()
-
     }
     update(deltaTime) {
         this.movePlayer(deltaTime)
@@ -49,12 +48,25 @@ export default class Player {
         //console.log(`${this.x}, ${this.y}`);                       //for logging player pos
         //console.log(this.getCoordFromPos({x: this.x, y: this.y}));    //for logging player coord (x,y) - so topleft corner
     }
+    draw() {
+        //const frame = this.playerFramesSouth[this.currentPlayerFrame];
+        //console.log(frame.image.src);
+        // Log the coordinates and dimensions
+        //console.log("sx:", frame.sx);
+        //console.log("sy:", frame.sy);
+        //console.log("sw:", frame.sw);
+        //console.log("sh:", frame.sh);
 
-    
+        //this.ctx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 10, 10, frame.sw, frame.sh)
+        this.ctx.drawImage(this.playerIdleImage, this.x, this.y)
+
+        //draw debug on top
+        this.debugShowPlayerMovementHitbox()
+        //this.debugDrawRectAroundTiles()
+    }
     loadPlayerImage() {
         this.playerIdleImage = new Image()
         this.playerIdleImage.src = document.getElementById("idlePlayerImage").src
-
     }
 
     playerShoot(){
@@ -104,12 +116,9 @@ export default class Player {
     }
 
     playerCanMoveTo(newPos) {
-
         //let coord = this.getCoordFromPos(newPos.x, newPos.y)
-
         let coords = this.getTilesUnderPlayer(newPos)
         //console.log(coords);
-
         for (let i = 0; i < coords.length; i++) {
             if (!this.canMoveTo(coords[i])) {
                 return false
@@ -165,7 +174,7 @@ export default class Player {
     //#endregion playerMovement
 
 
-    /*loadPlayerFrames() {
+    /*loadPlayerFrames() { // animation test
         let spriteSheet = new Image();
         //spriteSheet.src = `Character 3.png`; // Path to your player sprite sheet
         spriteSheet.src = document.getElementById("playerSheet").src; // Path to your player sprite sheet
@@ -188,35 +197,14 @@ export default class Player {
         }
         
     }*/
-    drawPlayer() {
-        //const frame = this.playerFramesSouth[this.currentPlayerFrame];
-        //console.log(frame.image.src); // Log the image object
-        // Log the coordinates and dimensions
-        //console.log("sx:", frame.sx);
-        //console.log("sy:", frame.sy);
-        //console.log("sw:", frame.sw);
-        //console.log("sh:", frame.sh);
-
-        //this.ctx.drawImage(frame.image, frame.sx, frame.sy, frame.sw, frame.sh, 10, 10, frame.sw, frame.sh)
-        this.ctx.drawImage(this.playerIdleImage, this.x, this.y)
-
-        //draw debug on top
-        //this.debugShowPlayerMovementHitbox()
-        //this.debugDrawRectAroundTiles()
-    }
+    
 
     //#region debug
     debugShowPlayerMovementHitbox() {
-        // might need to use this .save - don't really know
-        //this.ctx.save();
-
         this.ctx.strokeStyle = 'yellow';
         this.ctx.beginPath();
         this.ctx.rect(this.x + this.hitboxX, this.y + this.hitboxY, this.hitboxW, this.hitboxH);
         this.ctx.stroke();
-
-        // might need to use this .restore - don't really know
-        //this.ctx.restore();
     }
     debugDrawRectAroundTiles() {
         this.ctx.strokeStyle = 'blue';
@@ -229,10 +217,7 @@ export default class Player {
             this.ctx.rect(x, y, 16, 16);
             this.ctx.stroke();
         }
-
-        //this.ctx.restore();
     }
-    //#endregion debug
 }
 
 
@@ -242,17 +227,6 @@ export default class Player {
 let playerFramesNorth = [];
 let playerFramesSouth = []
 let currentPlayerFrame = 0;*/
-
-function makePlayer() {
-    let playerImage = new Image()
-    playerImage.src = `Character 3.png`
-    //src should be changed here right?
-
-    playerImage.onload = function () {
-        // Draw the image at its original size (16x20 pixels) and scale it up
-        ctx.drawImage(playerImage, 0, 0,); // Scale up by 5 times
-    };
-}
 
 
 

@@ -18,7 +18,6 @@ export default class Main {
         this.tick = this.tick.bind(this);
         this.lastTimestamp = 0
     }
-
     start() {
         requestAnimationFrame(this.tick)
     }
@@ -36,9 +35,9 @@ export default class Main {
         this.enemy.update(deltaTime)
 
         //draw - remember it needs to draw from back to front
-        this.roomManager.drawRoom()
+        this.roomManager.draw()
         this.bulletManager.draw()
-        this.player.drawPlayer()
+        this.player.draw()
         this.enemy.draw()
 
         requestAnimationFrame(this.tick)

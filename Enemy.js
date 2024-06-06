@@ -14,26 +14,26 @@ export default class Enemy {
         this.moveSpeed = 25
 
         //for Astar (pathfinding)
-        this.openTiles = []    //nodes we currently look at
+        this.openTiles = []    //nodes we need to look at
         this.closedTiles = []  //nodes we have allready looked at
         this.pathToPlayer = []
 
         //for debuggin line of sight (bresenhams)
         this.lineCellList = []
 
-        //debug flag
+        //debug flag - used for gui buttons
         this.debugLineOfSight = false;
         this.debugPath = false;
 
         this.start()
     }
     start() {
-        //runs Astar every xxx seconds
+        //runs Astar every 0.1 seconds (no reason for every frame)
         setInterval(() => {
             this.AstarRunner();
         }, 100);
 
-        //for the GUI button to turn on and offa
+        //for the GUI button to turn on and off
         document.getElementById('toggleLineOfSight').addEventListener('click', () => {
             this.debugLineOfSight = !this.debugLineOfSight;
         });
@@ -46,11 +46,9 @@ export default class Enemy {
     update(deltaTime) {
         this.moveTowardsPlayer(deltaTime)
 
-        this.lineCellList = [] //empty LOS array - should not be here in update
         this.calculateLineOfSight(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
 
-        //for the debug draw buttons in gui
-        this.updateButtonStyles()
+        this.updateButtonStyles() //for the debug draw buttons in gui
     }
     draw() {
         this.drawEnemyCube()
@@ -58,7 +56,6 @@ export default class Enemy {
         //DEBUG
         if (this.debugLineOfSight) this.debugDrawLineOfSight();
         if (this.debugPath) this.debugDrawPath();
-
     }
     updateButtonStyles() { //this method is for the GUI buttons
         const lineOfSightButton = document.getElementById('toggleLineOfSight');
@@ -91,7 +88,6 @@ export default class Enemy {
         this.x += moveX;
         this.y += moveY;
     }
-
 
     AstarRunner() {
         this.aStar(this.x, this.y, this.player.x + this.player.hitboxX, this.player.y + this.player.hitboxY)
@@ -214,11 +210,8 @@ export default class Enemy {
             path.unshift(currentTile); // add the current tile in front of the path array
             currentTile = currentTile.parent;
         }
-
-        //path.unshift(startTile); // add first start tile because we're done - might not need since enemy know what tile it's on
         this.pathToPlayer = path //finalPath is used for drawing and possible movement
     }
-
     drawEnemyCube() {
         this.ctx.strokeStyle = 'red';
         this.ctx.beginPath();
@@ -237,8 +230,8 @@ export default class Enemy {
             this.ctx.stroke();
         }
     }
-
     calculateLineOfSight(startX, startY, endX, endY) {
+        this.lineCellList = [] //empty the array from previous frame/tick
         //console.log(`${startX}, ${startY}, ${endX}, ${endY}`);
         let coord1 = this.getCoordFromPos({ x: startX, y: startY })
         let coord2 = this.getCoordFromPos({ x: endX, y: endY })
@@ -276,7 +269,6 @@ export default class Enemy {
         }
     }
     debugDrawLineOfSight() {
-
         for (let i = 0; i < this.lineCellList.length; i++) {
             const x = this.lineCellList[i].col * 16;
             const y = this.lineCellList[i].row * 16;
@@ -289,7 +281,6 @@ export default class Enemy {
             }
 
             // Draw a rectangle around the tile
-            //this.ctx.strokeStyle = 'blue'; // Change color as needed
             this.ctx.lineWidth = 1; // Adjust line width as needed
             this.ctx.beginPath();
             this.ctx.rect(x, y, 16, 16);
